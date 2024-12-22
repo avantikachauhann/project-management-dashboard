@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+     <!-- left section start -->
+     <aside>
+        <div class="top">
+            <div class="logo">
+                <h2>company<span class="name">-a</span></h2>
+            </div>
+            <div class="close" id="close_button">
+                <span class="material-symbols-sharp">close</span>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <a href="overview.html">
+                <span class="material-symbols-sharp"> grid_view </span>
+                <h3>Overview</h3>
+            </a>
+            <a href="projects.html">
+                <span class="material-symbols-sharp"> category </span>
+                <h3>Projects</h3>
+            </a>
+            <a href="teams.html">
+                <span class="material-symbols-sharp"> groups </span>
+                <h3>Teams</h3>
+            </a>
+            <a href="resources.html">
+                <span class="material-symbols-sharp"> inventory_2 </span>
+                <h3>Resources</h3>
+            </a>
+            <a href="milestones.html">
+                <span class="material-symbols-sharp"> insights </span>
+                <h3>Milestones</h3>
+            </a>
+            <a href="tasks.html">
+                <span class="material-symbols-sharp"> assignment </span>
+                <h3>Tasks</h3>
+            </a>
+            <a href="reports.html">
+                <span class="material-symbols-sharp"> assessment </span>
+                <h3>Reports</h3>
+            </a>
+            <a href="settings.html">
+                <span class="material-symbols-sharp"> settings </span>
+                <h3>Settings</h3>
+            </a>
+            <a href="logout.html">
+                <span class="material-symbols-sharp"> logout </span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+    </aside>
+    <!-- left section end -->
+
+
+     <!-- Main Section Start -->
+     <main>
+        
+        <div class="recent_order">
+            <h2>Task Management</h2>
+            <p>Track and manage tasks efficiently. Use filters to sort tasks by priority, status, or team members.</p>
+            <div class="task_filters">
+                <select id="filterPriority" class="filter-select">
+                    <option value="All">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <select id="filterStatus" class="filter-select">
+                    <option value="All">All Statuses</option>
+                    <option value="Completed">Completed</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Pending">Pending</option>
+                </select>
+                <button id="addTaskButton" class="add-task">+ Add Task</button>
+            </div>
+            <br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Assigned To</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Task rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    <!-- Main Section End -->
+
+    <!-- right section start -->
+    <div class="right">
+        <div class="top">
+            <button id="menu_bar">
+                <span class="material-symbols-sharp"> menu </span>
+            </button>
+            <div class="theme-toggler">
+                <span class="material-symbols-sharp active"> light_mode </span>
+                <span class="material-symbols-sharp"> dark_mode </span>
+            </div>
+            <div class="profile">
+                <div class="info">
+                    <p><b>Admin</b></p>
+                    <small>Internal</small>
+                </div>
+                <div class="profile-photo">
+                    <img src="/images/profile-1.jpg" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- right section end -->
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const taskData = [
+                { task: "Complete Dashboard UI", assignedTo: "John Doe", priority: "High", status: "In Progress", dueDate: "2024-12-31" },
+                { task: "Fix Backend Bugs", assignedTo: "Jane Smith", priority: "Medium", status: "Pending", dueDate: "2024-12-25" },
+                { task: "Prepare Sales Report", assignedTo: "Emily Clark", priority: "Low", status: "Completed", dueDate: "2024-12-15" },
+                { task: "Organize Team Meeting", assignedTo: "David Brown", priority: "High", status: "Pending", dueDate: "2024-12-20" },
+            ];
+
+            const tableBody = document.querySelector("table tbody");
+            const filterPriority = document.querySelector("#filterPriority");
+            const filterStatus = document.querySelector("#filterStatus");
+            const addTaskButton = document.querySelector("#addTaskButton");
+
+            function renderTasks(filteredData) {
+                tableBody.innerHTML = "";
+                filteredData.forEach((task) => {
+                    const row = `
+                        <tr>
+                            <td>${task.task}</td>
+                            <td>${task.assignedTo}</td>
+                            <td>${task.priority}</td>
+                            <td>${task.status}</td>
+                            <td>${task.dueDate}</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML("beforeend", row);
+                });
+            }
+
+            filterPriority.addEventListener("change", filterTasks);
+            filterStatus.addEventListener("change", filterTasks);
+
+            function filterTasks() {
+                const priorityValue = filterPriority.value;
+                const statusValue = filterStatus.value;
+                const filteredData = taskData.filter((task) => {
+                    return (
+                        (priorityValue === "All" || task.priority === priorityValue) &&
+                        (statusValue === "All" || task.status === statusValue)
+                    );
+                });
+                renderTasks(filteredData);
+            }
+
+            addTaskButton.addEventListener("click", () => {
+                alert("Add Task functionality is under development!");
+            });
+
+            // Initial render
+            renderTasks(taskData);
+        });
+    </script>
+
+    <script src="/script.js"></script>
+</div>
+</body>
+</html>

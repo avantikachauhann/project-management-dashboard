@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teams Management</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+    <!-- left section start -->
+    <aside>
+        <div class="top">
+            <div class="logo">
+                <h2>company<span class="name">-a</span></h2>
+            </div>
+            <div class="close" id="close_button">
+                <span class="material-symbols-sharp">close</span>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <a href="overview.html">
+                <span class="material-symbols-sharp"> grid_view </span>
+                <h3>Overview</h3>
+            </a>
+            <a href="projects.html">
+                <span class="material-symbols-sharp"> category </span>
+                <h3>Projects</h3>
+            </a>
+            <a href="teams.html">
+                <span class="material-symbols-sharp"> groups </span>
+                <h3>Teams</h3>
+            </a>
+            <a href="resources.html">
+                <span class="material-symbols-sharp"> inventory_2 </span>
+                <h3>Resources</h3>
+            </a>
+            <a href="milestones.html">
+                <span class="material-symbols-sharp"> insights </span>
+                <h3>Milestones</h3>
+            </a>
+            <a href="tasks.html">
+                <span class="material-symbols-sharp"> assignment </span>
+                <h3>Tasks</h3>
+            </a>
+            <a href="reports.html">
+                <span class="material-symbols-sharp"> assessment </span>
+                <h3>Reports</h3>
+            </a>
+            <a href="settings.html">
+                <span class="material-symbols-sharp"> settings </span>
+                <h3>Settings</h3>
+            </a>
+            <a href="logout.html">
+                <span class="material-symbols-sharp"> logout </span>
+                <h3>Logout</h3>
+            </a>
+        </div>
+    </aside>
+    <!-- left section end -->
+
+
+     <!-- main section start -->   
+    <main>    
+            <div class="recent_order">
+               <h2>Team Information</h2>
+                <br>
+                <table>
+                    <thead>
+                        <tr class="filter-row">
+                            <th>S.no.</th>
+                            <th>Team Name</th>
+                            <th>Team Lead
+                                <!-- Dropdown for filtering Teams -->
+                                <select id="filterLead" class="filter-select">
+                                    <option value="">All</option>
+                                    <option value="Lead A">Lead A</option>
+                                    <option value="Lead B">Lead B</option>
+                                    <option value="Lead C">Lead C</option>
+                                </select>
+                            </th>
+                            <th>No. of Members</th>
+                            <th>Project Assigned</th>
+                            <th>Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+             </div>
+    </main>
+
+     <!-- right section start -->
+     <div class="right">
+        <div class="top">
+            <button id="menu_bar">
+                <span class="material-symbols-sharp"> menu </span>
+            </button>
+            <div class="theme-toggler">
+                <span class="material-symbols-sharp active"> light_mode </span>
+                <span class="material-symbols-sharp"> dark_mode </span>
+            </div>
+            <div class="profile">
+                <div class="info">
+                    <p><b>Admin</b></p>
+                    <small>Internal</small>
+                </div>
+                <div class="profile-photo">
+                    <img src="/images/profile-1.jpg" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- right section end -->
+
+        <script>
+            const sideMenu = document.querySelector("aside");
+            const menuButton = document.querySelector("#menu_bar");
+            const closeButton = document.querySelector("#close_button");
+
+            document.addEventListener("DOMContentLoaded", () => {
+
+                // Filter
+                document.querySelector("#filterLead").addEventListener("change", function () {
+                    filterTable(2, this.value); // Team Lead is the third column
+                });
+
+                function filterTable(column, filterValue) {
+                    const rows = document.querySelectorAll("tbody tr");
+                    rows.forEach((row) => {
+                        const cellValue = row.cells[column]?.textContent;
+                        if (!filterValue || cellValue === filterValue) {
+                            row.style.display = "table-row";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+                }
+
+                const teamData = [
+                    { sno: 1, teamName: "Team Alpha", lead: "Lead A", members: 5, project: "Project X", contact: "123-456-7890" },
+                    { sno: 2, teamName: "Team Beta", lead: "Lead B", members: 8, project: "Project Y", contact: "987-654-3210" },
+                    { sno: 3, teamName: "Team Gamma", lead: "Lead C", members: 6, project: "Project Z", contact: "456-789-1230" },
+                ];
+
+                // Populate the table
+                teamData.forEach((data) => {
+                    const tr = document.createElement("tr");
+                    const trContent = `
+                        <td>${data.sno}</td>
+                        <td>${data.teamName}</td>
+                        <td>${data.lead}</td>
+                        <td>${data.members}</td>
+                        <td>${data.project}</td>
+                        <td>${data.contact}</td>
+                    `;
+                    tr.innerHTML = trContent;
+                    document.querySelector("table tbody").appendChild(tr);
+                });
+            });
+        </script>
+    </div>
+
+    <script src="/script.js"></script>
+
+</body>
+</html>

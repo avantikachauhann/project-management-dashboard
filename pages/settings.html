@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization</title>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="/style.css"> 
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Section Start -->
+        <aside>
+            <div class="top">
+                <div class="logo">
+                    <h2>company<span class="name">-a</span></h2>
+                </div>
+                <div class="close" id="close_button">
+                    <span class="material-symbols-sharp">close</span>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <a href="overview.html">
+                    <span class="material-symbols-sharp"> grid_view </span>
+                    <h3>Overview</h3>
+                </a>
+                <a href="projects.html">
+                    <span class="material-symbols-sharp"> category </span>
+                    <h3>Projects</h3>
+                </a>
+                <a href="teams.html">
+                    <span class="material-symbols-sharp"> groups </span>
+                    <h3>Teams</h3>
+                </a>
+                <a href="resources.html">
+                    <span class="material-symbols-sharp"> inventory_2 </span>
+                    <h3>Resources</h3>
+                </a>
+                <a href="milestones.html">
+                    <span class="material-symbols-sharp"> insights </span>
+                    <h3>Milestones</h3>
+                </a>
+                <a href="tasks.html">
+                    <span class="material-symbols-sharp"> assignment </span>
+                    <h3>Tasks</h3>
+                </a>
+                <a href="reports.html">
+                    <span class="material-symbols-sharp"> assessment </span>
+                    <h3>Reports</h3>
+                </a>
+                <a href="settings.html">
+                    <span class="material-symbols-sharp"> settings </span>
+                    <h3>Settings</h3>
+                </a>
+                <a href="logout.html">
+                    <span class="material-symbols-sharp"> logout </span>
+                    <h3>Logout</h3>
+                </a>
+            </div>
+        </aside>
+        <!-- Left Section End -->
+
+        <!-- Main Section Start -->
+        <main>
+            <h1>Data Visualization</h1>
+            <br>
+            <div>
+                <label for="excel-file">Upload Excel File:</label>
+                <input type="file" id="excel-file" accept=".xlsx, .xls">
+            </div>
+            <br>
+            <div class="filter-row">
+                <div class="select-wrapper">
+                    <label for="x-axis-select">Select X-axis:</label>
+                    <select id="x-axis-select" class="filter-select">
+                        <option value="">Choose a variable</option>
+                    </select>
+                </div>
+                <div class="select-wrapper">
+                    <label for="y-axis-select">Select Y-axis:</label>
+                    <select id="y-axis-select" class="filter-select">
+                        <option value="">Choose a variable</option>
+                    </select>
+                </div>
+                <div class="select-wrapper">
+                    <label for="chart-type-select">Select Visualization Type:</label>
+                    <select id="chart-type-select" class="filter-select">
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="scatter">Scatter Plot</option>
+                        <option value="pie">Pie Chart</option>
+                    </select>
+                </div>
+                <button id="generate-chart-button">Generate Chart</button>
+            </div>
+            <div id="visualization-container">
+                <canvas id="myChart"></canvas>
+            </div>
+        </main>
+        <!-- Main Section End -->
+
+        <!-- right section start -->
+        <div class="right">
+            <div class="top">
+                <button id="menu_bar">
+                    <span class="material-symbols-sharp"> menu </span>
+                </button>
+                <div class="theme-toggler">
+                    <span class="material-symbols-sharp active"> light_mode </span>
+                    <span class="material-symbols-sharp"> dark_mode </span>
+                </div>
+                <div class="profile">
+                    <div class="info">
+                        <p><b>Admin</b></p>
+                        <small>Internal</small>
+                    </div>
+                    <div class="profile-photo">
+                        <img src="/images/profile-1.jpg" alt="Profile">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- right section end -->
+
+    </div>
+
+    <script src="script.js"></script> <!-- JavaScript file -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('excel-file');
+            const xAxisSelect = document.getElementById('x-axis-select');
+            const yAxisSelect = document.getElementById('y-axis-select');
+            const chartTypeSelect = document.getElementById('chart-type-select');
+            const generateChartButton = document.getElementById('generate-chart-button');
+            const visualizationContainer = document.getElementById('visualization-container');
+        
+            let jsonData = []; // Store Excel data
+        
+            function populateAxisSelectors(headers) {
+                xAxisSelect.innerHTML = '';
+                yAxisSelect.innerHTML = '';
+        
+                headers.forEach(header => {
+                    const optionX = new Option(header, header);
+                    const optionY = new Option(header, header);
+                    xAxisSelect.add(optionX);
+                    yAxisSelect.add(optionY);
+                });
+            }
+        
+            if (fileInput) {
+                fileInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+        
+                    reader.onload = function (event) {
+                        const data = new Uint8Array(event.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+                        if (jsonData.length > 0) {
+                            const headers = jsonData[0]; // Extract the first row as headers
+                            populateAxisSelectors(headers);
+                        }
+                    };
+        
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+        
+            if (generateChartButton && visualizationContainer) {
+                generateChartButton.addEventListener('click', function () {
+                    const canvas = document.createElement('canvas');
+                    visualizationContainer.innerHTML = ''; // Clear previous canvas
+                    visualizationContainer.appendChild(canvas);
+        
+                    const ctx = canvas.getContext('2d');
+                    const xVariable = xAxisSelect.value;
+                    const yVariable = yAxisSelect.value;
+                    const chartType = chartTypeSelect.value;
+        
+                    const xIndex = jsonData[0].indexOf(xVariable); // Find column index for X
+                    const yIndex = jsonData[0].indexOf(yVariable); // Find column index for Y
+        
+                    const labels = jsonData.slice(1).map(item => item[xIndex]); // Extract X-axis data
+                    const data = jsonData.slice(1).map(item => item[yIndex]); // Extract Y-axis data
+        
+                    // Destroy previous chart if it exists
+                    if (window.myChart instanceof Chart) {
+                        window.myChart.destroy();
+                    }
+        
+                    // Create new chart
+                    window.myChart = new Chart(ctx, {
+                        type: chartType,
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: `${yVariable} vs ${xVariable}`,
+                                data: data,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            } else {
+                console.error('Generate chart button or visualization container not found.');
+            }
+        });        
+    </script>
+
+    <script src="/script.js"></script>
+</body>
+</html>
